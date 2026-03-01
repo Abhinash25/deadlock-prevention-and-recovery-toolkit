@@ -1,0 +1,5 @@
+{
+  "name": "Deadlock Toolkit",
+  "description": "A comprehensive toolkit for deadlock prevention, detection, and recovery featuring Banker's Algorithm and Resource Allocation Graph visualization.",
+  "requestFramePermissions": []
+}

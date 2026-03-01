@@ -52,11 +52,11 @@ const RAG: React.FC<RAGProps> = ({ nodes, edges, highlightPath = [] }) => {
       .attr("xoverflow", "visible")
       .append("svg:path")
       .attr("d", "M 0,-5 L 10 ,0 L 0,5")
-      .attr("fill", "#999")
+      .attr("fill", "#a8a29e")
       .style("stroke", "none");
 
     const link = svg.append("g")
-      .attr("stroke", "#999")
+      .attr("stroke", "#a8a29e")
       .attr("stroke-opacity", 0.6)
       .selectAll("line")
       .data(simEdges)
@@ -74,7 +74,7 @@ const RAG: React.FC<RAGProps> = ({ nodes, edges, highlightPath = [] }) => {
             return "#ef4444";
           }
         }
-        return "#999";
+        return "#a8a29e";
       });
 
     const node = svg.append("g")
@@ -89,8 +89,8 @@ const RAG: React.FC<RAGProps> = ({ nodes, edges, highlightPath = [] }) => {
     node.append("circle")
       .attr("r", 20)
       .attr("fill", (d: any) => d.type === 'process' ? "#3b82f6" : "#10b981")
-      .attr("stroke", (d: any) => highlightPath.includes(d.id) ? "#ef4444" : "#fff")
-      .attr("stroke-width", (d: any) => highlightPath.includes(d.id) ? 3 : 1.5);
+      .attr("stroke", (d: any) => highlightPath.includes(d.id) ? "#ef4444" : "#e7e5e4")
+      .attr("stroke-width", (d: any) => highlightPath.includes(d.id) ? 3 : 2);
 
     node.append("text")
       .text((d: any) => d.id)
@@ -133,7 +133,7 @@ const RAG: React.FC<RAGProps> = ({ nodes, edges, highlightPath = [] }) => {
   }, [nodes, edges, highlightPath]);
 
   return (
-    <div className="w-full h-[500px] bg-slate-900/50 rounded-xl border border-white/10 overflow-hidden">
+    <div className="w-full h-[500px] bg-stone-50 rounded-xl border border-stone-200 overflow-hidden">
       <svg ref={svgRef} width="100%" height="100%" viewBox="0 0 800 500" />
     </div>
   );

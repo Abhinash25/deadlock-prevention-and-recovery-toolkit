@@ -86,69 +86,69 @@ const SimulationPage = () => {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 max-w-6xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-white">Simulation Engine</h2>
-          <p className="text-slate-400">Real-time deadlock scenario simulation using Banker's Algorithm</p>
+          <h2 className="text-2xl font-bold text-stone-800">Simulation Engine</h2>
+          <p className="text-stone-500 mt-1">Real-time deadlock scenario simulation using Banker's Algorithm</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <button
             onClick={handleRunOnce}
             disabled={isRunning}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-900/20 disabled:opacity-50"
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm disabled:opacity-50 text-sm"
           >
-            <Play className="w-5 h-5" />
+            <Play className="w-4 h-4" />
             Run Once
           </button>
           <button
             onClick={() => setIsRunning(!isRunning)}
             className={cn(
-              "px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg",
+              "px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm text-sm text-white",
               isRunning
-                ? "bg-amber-600 hover:bg-amber-500 shadow-amber-900/20"
-                : "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/20"
+                ? "bg-amber-500 hover:bg-amber-600"
+                : "bg-emerald-500 hover:bg-emerald-600"
             )}
           >
-            {isRunning ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+            {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
             {isRunning ? 'Pause' : 'Auto-Run'}
           </button>
           <button
             onClick={handleReset}
-            className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all border border-white/5"
+            className="bg-stone-100 hover:bg-stone-200 text-stone-700 px-4 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors border border-stone-200 text-sm"
           >
-            <RotateCcw className="w-5 h-5" />
+            <RotateCcw className="w-4 h-4" />
             Reset
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Running Processes', value: stats.running, icon: Cpu, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Blocked Processes', value: stats.blocked, icon: Activity, color: 'text-red-400', bg: 'bg-red-500/10' },
-          { label: 'Simulations Run', value: stats.totalSteps, icon: Database, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'System Health', value: stats.status === 'idle' ? 'Idle' : stats.status === 'safe' ? 'Safe' : 'Unsafe', icon: ShieldAlert, color: stats.status === 'unsafe' ? 'text-red-400' : stats.status === 'safe' ? 'text-emerald-400' : 'text-slate-400', bg: stats.status === 'unsafe' ? 'bg-red-500/10' : stats.status === 'safe' ? 'bg-emerald-500/10' : 'bg-slate-500/10' },
+          { label: 'Running Processes', value: stats.running, icon: Cpu, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
+          { label: 'Blocked Processes', value: stats.blocked, icon: Activity, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' },
+          { label: 'Simulations Run', value: stats.totalSteps, icon: Database, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+          { label: 'System Health', value: stats.status === 'idle' ? 'Idle' : stats.status === 'safe' ? 'Safe' : 'Unsafe', icon: ShieldAlert, color: stats.status === 'unsafe' ? 'text-red-600' : stats.status === 'safe' ? 'text-emerald-600' : 'text-stone-500', bg: stats.status === 'unsafe' ? 'bg-red-50' : stats.status === 'safe' ? 'bg-emerald-50' : 'bg-stone-50', border: stats.status === 'unsafe' ? 'border-red-200' : stats.status === 'safe' ? 'border-emerald-200' : 'border-stone-200' },
         ].map((stat, i) => (
-          <div key={i} className="bg-slate-900/50 border border-white/10 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className={cn("p-3 rounded-xl", stat.bg)}>
-                <stat.icon className={cn("w-6 h-6", stat.color)} />
+          <div key={i} className={cn("bg-white border rounded-xl p-5 shadow-sm", stat.border)}>
+            <div className="flex items-center justify-between mb-3">
+              <div className={cn("p-2.5 rounded-lg", stat.bg)}>
+                <stat.icon className={cn("w-5 h-5", stat.color)} />
               </div>
               <span className={cn("text-2xl font-bold", stat.color)}>{stat.value}</span>
             </div>
-            <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
+            <p className="text-sm text-stone-500 font-medium">{stat.label}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Configuration</h3>
-            <div className="space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1 space-y-4">
+          <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-stone-800 mb-4">Configuration</h3>
+            <div className="space-y-4">
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Number of Processes</label>
+                <label className="block text-sm text-stone-500 mb-1.5">Number of Processes</label>
                 <input
                   type="number"
                   min={2}
@@ -156,11 +156,11 @@ const SimulationPage = () => {
                   value={numProcesses}
                   onChange={(e) => setNumProcesses(Math.max(2, Math.min(10, parseInt(e.target.value) || 2)))}
                   disabled={isRunning}
-                  className="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-2.5 text-stone-800 focus:outline-none focus:border-orange-400 disabled:opacity-50"
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Number of Resources</label>
+                <label className="block text-sm text-stone-500 mb-1.5">Number of Resources</label>
                 <input
                   type="number"
                   min={1}
@@ -168,13 +168,13 @@ const SimulationPage = () => {
                   value={numResources}
                   onChange={(e) => setNumResources(Math.max(1, Math.min(6, parseInt(e.target.value) || 1)))}
                   disabled={isRunning}
-                  className="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-2.5 text-stone-800 focus:outline-none focus:border-orange-400 disabled:opacity-50"
                 />
               </div>
               <div>
-                <div className="flex justify-between mb-2">
-                  <label className="text-sm text-slate-400">Auto-Run Speed</label>
-                  <span className="text-sm text-blue-400 font-mono">{speed}%</span>
+                <div className="flex justify-between mb-1.5">
+                  <label className="text-sm text-stone-500">Auto-Run Speed</label>
+                  <span className="text-sm text-orange-600 font-mono">{speed}%</span>
                 </div>
                 <input
                   type="range"
@@ -182,13 +182,13 @@ const SimulationPage = () => {
                   max={90}
                   value={speed}
                   onChange={(e) => setSpeed(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                  className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
                 />
               </div>
 
-              <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl">
-                <p className="text-xs text-blue-400 font-bold uppercase mb-1">How it Works</p>
-                <p className="text-xs text-slate-500 leading-relaxed">
+              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <p className="text-xs text-orange-700 font-bold uppercase mb-1">How it Works</p>
+                <p className="text-xs text-stone-500 leading-relaxed">
                   Each simulation generates a random system with the specified processes and resources,
                   then simulates resource requests step-by-step using Banker's Algorithm to check safety.
                   Unsafe requests are automatically denied.
@@ -199,22 +199,23 @@ const SimulationPage = () => {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-slate-950 border border-white/10 rounded-2xl overflow-hidden flex flex-col h-[500px]">
-            <div className="bg-slate-900 px-6 py-4 border-b border-white/10 flex items-center justify-between">
+          {/* Terminal-style log — kept dark for Notion code-block feel */}
+          <div className="bg-stone-900 border border-stone-700 rounded-xl overflow-hidden flex flex-col h-[500px]">
+            <div className="bg-stone-800 px-5 py-3 border-b border-stone-700 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-slate-500" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Simulation Log</h3>
+                <Terminal className="w-4 h-4 text-stone-400" />
+                <h3 className="text-sm font-bold text-stone-200 uppercase tracking-wider">Simulation Log</h3>
                 {isRunning && <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse ml-2" />}
               </div>
-              <div className="flex gap-1">
-                <div className="w-2 h-2 rounded-full bg-red-500/50" />
-                <div className="w-2 h-2 rounded-full bg-amber-500/50" />
-                <div className="w-2 h-2 rounded-full bg-emerald-500/50" />
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500/60" />
+                <div className="w-3 h-3 rounded-full bg-amber-500/60" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500/60" />
               </div>
             </div>
-            <div ref={logContainerRef} className="flex-1 p-6 font-mono text-sm overflow-y-auto space-y-1">
+            <div ref={logContainerRef} className="flex-1 p-5 font-mono text-sm overflow-y-auto space-y-1">
               {logs.length === 0 && (
-                <div className="h-full flex items-center justify-center text-slate-600 italic">
+                <div className="h-full flex items-center justify-center text-stone-600 italic">
                   Click "Run Once" or "Auto-Run" to start simulation...
                 </div>
               )}
@@ -224,10 +225,10 @@ const SimulationPage = () => {
                   log.text.includes('Denied') || log.text.includes('UNSAFE')
                     ? "border-red-500 text-red-400 bg-red-500/5"
                     : log.text.includes('Granted') || log.text.includes('SAFE')
-                      ? "border-emerald-800 text-emerald-400"
+                      ? "border-emerald-600 text-emerald-400"
                       : log.text.includes('---')
                         ? "border-blue-500 text-blue-400 font-bold"
-                        : "border-slate-800 text-slate-500"
+                        : "border-stone-700 text-stone-500"
                 )}>
                   {log.text}
                 </div>

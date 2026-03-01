@@ -47,48 +47,48 @@ const BankersPage = () => {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 max-w-5xl mx-auto space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-white">Banker's Algorithm</h2>
-          <p className="text-slate-400">Deadlock prevention through safety state analysis</p>
+          <h2 className="text-2xl font-bold text-stone-800">Banker's Algorithm</h2>
+          <p className="text-stone-500 mt-1">Deadlock prevention through safety state analysis</p>
         </div>
         <button
           onClick={handleRun}
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-900/20 disabled:opacity-50"
+          className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm disabled:opacity-50"
         >
-          <Play className="w-5 h-5" />
+          <Play className="w-4 h-4" />
           {loading ? 'Analyzing...' : 'Run Safety Check'}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-500" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-stone-800 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-orange-500" />
               Allocation Matrix
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr>
-                    <th className="p-2 text-slate-500 text-xs uppercase">Process</th>
-                    {resources.map(r => <th key={r} className="p-2 text-slate-500 text-xs uppercase">{r}</th>)}
+                    <th className="p-2 text-stone-400 text-xs uppercase">Process</th>
+                    {resources.map(r => <th key={r} className="p-2 text-stone-400 text-xs uppercase">{r}</th>)}
                   </tr>
                 </thead>
                 <tbody>
                   {processes.map((p, i) => (
-                    <tr key={p} className="border-t border-white/5">
-                      <td className="p-2 font-mono text-blue-400">{p}</td>
+                    <tr key={p} className="border-t border-stone-100">
+                      <td className="p-2 font-mono text-orange-600">{p}</td>
                       {resources.map((_, j) => (
                         <td key={j} className="p-1">
                           <input
                             type="number"
                             value={allocation[i]?.[j] ?? 0}
                             onChange={(e) => updateMatrix(allocation, setAllocation, i, j, e.target.value)}
-                            className="w-16 bg-slate-800 border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:border-blue-500"
+                            className="w-16 bg-stone-50 border border-stone-200 rounded px-2 py-1 text-stone-800 focus:outline-none focus:border-orange-400"
                           />
                         </td>
                       ))}
@@ -99,30 +99,30 @@ const BankersPage = () => {
             </div>
           </div>
 
-          <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-stone-800 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-500" />
               Max Matrix
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr>
-                    <th className="p-2 text-slate-500 text-xs uppercase">Process</th>
-                    {resources.map(r => <th key={r} className="p-2 text-slate-500 text-xs uppercase">{r}</th>)}
+                    <th className="p-2 text-stone-400 text-xs uppercase">Process</th>
+                    {resources.map(r => <th key={r} className="p-2 text-stone-400 text-xs uppercase">{r}</th>)}
                   </tr>
                 </thead>
                 <tbody>
                   {processes.map((p, i) => (
-                    <tr key={p} className="border-t border-white/5">
-                      <td className="p-2 font-mono text-emerald-400">{p}</td>
+                    <tr key={p} className="border-t border-stone-100">
+                      <td className="p-2 font-mono text-blue-600">{p}</td>
                       {resources.map((_, j) => (
                         <td key={j} className="p-1">
                           <input
                             type="number"
                             value={max[i]?.[j] ?? 0}
                             onChange={(e) => updateMatrix(max, setMax, i, j, e.target.value)}
-                            className="w-16 bg-slate-800 border border-white/10 rounded px-2 py-1 text-white focus:outline-none focus:border-emerald-500"
+                            className="w-16 bg-stone-50 border border-stone-200 rounded px-2 py-1 text-stone-800 focus:outline-none focus:border-blue-400"
                           />
                         </td>
                       ))}
@@ -133,15 +133,15 @@ const BankersPage = () => {
             </div>
           </div>
 
-          <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-stone-800 mb-4 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-500" />
               Available Resources
             </h3>
             <div className="flex gap-4">
               {resources.map((r, i) => (
                 <div key={r} className="flex flex-col gap-1">
-                  <label className="text-xs text-slate-500 uppercase">{r}</label>
+                  <label className="text-xs text-stone-400 uppercase">{r}</label>
                   <input
                     type="number"
                     value={available[i] ?? 0}
@@ -150,7 +150,7 @@ const BankersPage = () => {
                       newAvail[i] = parseInt(e.target.value) || 0;
                       setAvailable(newAvail);
                     }}
-                    className="w-20 bg-slate-800 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+                    className="w-20 bg-stone-50 border border-stone-200 rounded px-3 py-2 text-stone-800 focus:outline-none focus:border-amber-400"
                   />
                 </div>
               ))}
@@ -158,17 +158,17 @@ const BankersPage = () => {
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {result ? (
             <>
               <div className={cn(
-                "rounded-2xl p-6 border transition-all",
-                result.safe ? "bg-emerald-500/10 border-emerald-500/20" : "bg-red-500/10 border-red-500/20"
+                "rounded-xl p-5 border transition-all",
+                result.safe ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"
               )}>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className={cn(
-                    "text-xl font-bold",
-                    result.safe ? "text-emerald-400" : "text-red-400"
+                    "text-lg font-bold",
+                    result.safe ? "text-emerald-700" : "text-red-700"
                   )}>
                     {result.safe ? 'System is SAFE ✓' : 'System is UNSAFE ✗'}
                   </h3>
@@ -183,43 +183,43 @@ const BankersPage = () => {
                   <div className="flex flex-wrap gap-2 mb-4">
                     {result.safe_sequence.map((p: string, i: number) => (
                       <React.Fragment key={p}>
-                        <div className="bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white font-mono">
+                        <div className="bg-white border border-stone-200 rounded-lg px-4 py-2 text-stone-800 font-mono shadow-sm">
                           {p}
                         </div>
                         {i < result.safe_sequence.length - 1 && (
-                          <div className="flex items-center text-slate-600">→</div>
+                          <div className="flex items-center text-stone-400">→</div>
                         )}
                       </React.Fragment>
                     ))}
                   </div>
                 )}
 
-                <div className="bg-slate-950/50 rounded-xl p-4 font-mono text-sm space-y-2 max-h-[300px] overflow-y-auto">
+                <div className="bg-stone-800 rounded-lg p-4 font-mono text-sm space-y-2 max-h-[300px] overflow-y-auto">
                   {result.log.map((line: string, i: number) => (
-                    <div key={i} className="text-slate-400">
-                      <span className="text-slate-600 mr-2">[{i + 1}]</span>
+                    <div key={i} className="text-stone-400">
+                      <span className="text-stone-600 mr-2">[{i + 1}]</span>
                       {line}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Need Matrix (Calculated)</h3>
+              <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+                <h3 className="text-base font-semibold text-stone-800 mb-4">Need Matrix (Calculated)</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
                       <tr>
-                        <th className="p-2 text-slate-500 text-xs uppercase">Process</th>
-                        {resources.map(r => <th key={r} className="p-2 text-slate-500 text-xs uppercase">{r}</th>)}
+                        <th className="p-2 text-stone-400 text-xs uppercase">Process</th>
+                        {resources.map(r => <th key={r} className="p-2 text-stone-400 text-xs uppercase">{r}</th>)}
                       </tr>
                     </thead>
                     <tbody>
                       {processes.map((p, i) => (
-                        <tr key={p} className="border-t border-white/5">
-                          <td className="p-2 font-mono text-slate-400">{p}</td>
+                        <tr key={p} className="border-t border-stone-100">
+                          <td className="p-2 font-mono text-stone-500">{p}</td>
                           {resources.map((_, j) => (
-                            <td key={j} className="p-2 text-white font-mono">
+                            <td key={j} className="p-2 text-stone-700 font-mono">
                               {result.need_matrix[i]?.[j] ?? 0}
                             </td>
                           ))}
@@ -231,12 +231,12 @@ const BankersPage = () => {
               </div>
             </>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-slate-900/20 border border-dashed border-white/10 rounded-2xl">
-              <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                <ShieldCheck className="w-8 h-8 text-slate-600" />
+            <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-stone-50 border border-dashed border-stone-300 rounded-xl">
+              <div className="w-14 h-14 bg-stone-100 rounded-full flex items-center justify-center mb-4">
+                <ShieldCheck className="w-7 h-7 text-stone-400" />
               </div>
-              <h3 className="text-lg font-medium text-slate-400">Ready for Analysis</h3>
-              <p className="text-sm text-slate-500 max-w-xs mt-2">
+              <h3 className="text-base font-medium text-stone-500">Ready for Analysis</h3>
+              <p className="text-sm text-stone-400 max-w-xs mt-2">
                 Configure the matrices and run the safety algorithm to see the results here.
               </p>
             </div>

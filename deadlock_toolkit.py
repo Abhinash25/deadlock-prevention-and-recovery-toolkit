@@ -219,6 +219,19 @@ def press_enter():
     console.print()
     console.input("[dim italic]  ⏎  Press Enter to continue...[/]")
 
+
+def with_repeat(func, name):
+    """Run a feature, then offer Run Again / Exit to Main Menu."""
+    while True:
+        func()
+        console.print()
+        console.print(Rule("", style="dim"))
+        console.print(f"\n  [cyan]1.[/] [bold]🔄 Run {name} Again[/]")
+        console.print(f"  [cyan]2.[/] [bold]🚪 Exit to Main Menu[/]")
+        action = console.input("\n[bold cyan]  Your choice (1-2): [/]").strip()
+        if action != '1':
+            return
+
 def get_int(prompt, min_val=1, max_val=99):
     while True:
         try:
@@ -1461,26 +1474,25 @@ def run_rag_visualizer():
 
 def show_banner():
     banner_lines = [
-        "    ╔══════════════════════════════════════════════════════════════╗",
-        "    ║                                                              ║",
-        "    ║        ██████╗ ███████╗ █████╗ ██████╗ ██╗      ██████╗      ║",
-        "    ║        ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║     ██╔═══██╗     ║",
-        "    ║        ██║  ██║█████╗  ███████║██║  ██║██║     ██║   ██║     ║",
-        "    ║        ██║  ██║██╔══╝  ██╔══██║██║  ██║██║     ██║   ██║     ║",
-        "    ║        ██████╔╝███████╗██║  ██║██████╔╝███████╗╚██████╔╝     ║",
-        "    ║        ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝      ║",
-        "    ║                                                              ║",
-        "    ║         ████████╗ ██████╗  ██████╗ ██╗     ██╗  ██╗          ║",
-        "    ║         ╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██║ ██╔╝          ║",
-        "    ║            ██║   ██║   ██║██║   ██║██║     █████╔╝           ║",
-        "    ║            ██║   ██║   ██║██║   ██║██║     ██╔═██╗           ║",
-        "    ║            ██║   ╚██████╔╝╚██████╔╝███████╗██║  ██╗          ║",
-        "    ║            ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝          ║",
-        "    ║                                                              ║",
-        "    ║       DEADLOCK PREVENTION & DETECTION TOOLKIT                ║",
-        "    ║                                                              ║",
-        "    ║                                                              ║",
-        "    ╚══════════════════════════════════════════════════════════════╝",
+        "    ╔═══════════════════════════════════════════════════════════════════════════════╗",
+        "    ║                                                                               ║",
+        "    ║   ██████╗ ███████╗ █████╗ ██████╗ ██╗      ██████╗  ██████╗██╗  ██╗           ║",
+        "    ║   ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║     ██╔═══██╗██╔════╝██║ ██╔╝           ║",
+        "    ║   ██║  ██║█████╗  ███████║██║  ██║██║     ██║   ██║██║     █████╔╝            ║",
+        "    ║   ██║  ██║██╔══╝  ██╔══██║██║  ██║██║     ██║   ██║██║     ██╔═██╗            ║",
+        "    ║   ██████╔╝███████╗██║  ██║██████╔╝███████╗╚██████╔╝╚██████╗██║  ██╗           ║",
+        "    ║   ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝           ║",
+        "    ║                                                                               ║",
+        "    ║   ████████╗ ██████╗  ██████╗ ██╗     ██╗  ██╗██╗████████╗                     ║",
+        "    ║   ╚══██╔══╝██╔═══██╗██╔═══██╗██║     ██║ ██╔╝██║╚══██╔══╝                     ║",
+        "    ║      ██║   ██║   ██║██║   ██║██║     █████╔╝ ██║   ██║                        ║",
+        "    ║      ██║   ██║   ██║██║   ██║██║     ██╔═██╗ ██║   ██║                        ║",
+        "    ║      ██║   ╚██████╔╝╚██████╔╝███████╗██║  ██╗██║   ██║                        ║",
+        "    ║      ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝                        ║",
+        "    ║                                                                               ║",
+        "    ║            DEADLOCK PREVENTION & DETECTION TOOLKIT                             ║",
+        "    ║                                                                               ║",
+        "    ╚═══════════════════════════════════════════════════════════════════════════════╝",
     ]
     # Cascade reveal with color cycling
     colors = itertools.cycle(["bright_cyan", "bright_blue", "bright_magenta", "bright_cyan"])
@@ -1532,13 +1544,13 @@ def main_menu():
         choice = console.input("[bold cyan]  Enter your choice (1-7): [/]").strip()
 
         if choice == '1':
-            run_bankers()
+            with_repeat(run_bankers, "Banker's Algorithm")
         elif choice == '2':
-            run_detection()
+            with_repeat(run_detection, "Deadlock Detection")
         elif choice == '3':
-            run_recovery()
+            with_repeat(run_recovery, "Deadlock Recovery")
         elif choice == '4':
-            run_simulation()
+            with_repeat(run_simulation, "Simulation Engine")
         elif choice == '5':
             run_live_monitor()
         elif choice == '6':
@@ -1548,14 +1560,14 @@ def main_menu():
             # Animated goodbye
             goodbye_lines = [
                 "",
-                "  ╔══════════════════════════════════════════════╗",
-                "  ║                                              ║",
-                "  ║   Thank you for using the Deadlock Toolkit!  ║",
-                "  ║                                              ║",
-                "  ║                                              ║",
-                "  ║                                              ║",
-                "  ║                                              ║",
-                "  ╚══════════════════════════════════════════════╝",
+                "  ╔══════════════════════════════════════════════════════╗",
+                "  ║                                                      ║",
+                "  ║   ⚡ Terminating Deadlock System.                   ║",
+                "  ║                                                      ║",
+                "  ║   Thank you for using the Deadlock Toolkit!          ║",
+                "  ║   All processes released. System is now SAFE.        ║",
+                "  ║                                                      ║",
+                "  ╚══════════════════════════════════════════════════════╝",
                 "",
             ]
             colors = itertools.cycle(["bright_cyan", "bright_blue", "bright_magenta"])

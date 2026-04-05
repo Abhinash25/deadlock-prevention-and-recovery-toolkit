@@ -464,7 +464,7 @@ class DetectionPage(ctk.CTkScrollableFrame):
         ctk.CTkLabel(self, text="Cycle detection in Resource Allocation Graphs (RAG)", font=(FONT_FAMILY, 12), text_color=STONE500, anchor="w").pack(fill="x", padx=32, pady=(0,16))
 
         content = ctk.CTkFrame(self, fg_color="transparent")
-        content.pack(fill="both", expand=True, padx=32, pady=(0,32))
+        content.pack(fill="both", expand=True, padx=32, pady=(0,8))
         content.columnconfigure(0, weight=2)
         content.columnconfigure(1, weight=1)
 
@@ -523,6 +523,10 @@ class DetectionPage(ctk.CTkScrollableFrame):
         self.edge_list.pack(fill="x", padx=16, pady=(0,16))
         self.refresh_edge_list()
 
+        # RAG Tables & Safe Sequence display area
+        self.tables_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.tables_frame.pack(fill="x", padx=32, pady=(0,32))
+
     def show_scan_placeholder(self):
         for w in self.result_frame.winfo_children(): w.destroy()
         ph = ctk.CTkFrame(self.result_frame, fg_color=STONE50, corner_radius=12, border_width=1, border_color=STONE200)
@@ -578,6 +582,7 @@ class DetectionPage(ctk.CTkScrollableFrame):
         dl, procs, cycle = detect_deadlock(self.nodes, self.edges)
         self.draw_graph(cycle if dl else None)
         for w in self.result_frame.winfo_children(): w.destroy()
+        for w in self.tables_frame.winfo_children(): w.destroy()
         if dl:
             rc = ctk.CTkFrame(self.result_frame, fg_color=RED_LIGHT, corner_radius=12, border_width=1, border_color="#fecaca")
             rc.pack(fill="x")
@@ -606,6 +611,103 @@ class DetectionPage(ctk.CTkScrollableFrame):
             ctk.CTkLabel(rc, text="✓ No Deadlock Found", font=(FONT_FAMILY, 15, "bold"), text_color="#047857").pack(padx=16, pady=(16,4), anchor="w")
             ctk.CTkLabel(rc, text="No cycles found in the RAG.", font=(FONT_FAMILY, 11), text_color=STONE600).pack(padx=16, pady=(0,16), anchor="w")
 
+        # ── Build Allocation & Request Tables + Safe Sequence ──
+        procs_list = sorted([n['id'] for n in self.nodes if n['type'] == 'process'])
+        res_list = sorted([n['id'] for n in self.nodes if n['type'] == 'resource'])
+        if not procs_list or not res_list:
+            return
+        np_, nr_ = len(procs_list), len(res_list)
+
+        # Build matrices from edges: R→P = allocation, P→R = request
+        alloc = [[0]*nr_ for _ in range(np_)]
+        req = [[0]*nr_ for _ in range(np_)]
+        for e in self.edges:
+            s, t = e['source'], e['target']
+            st = next((nd['type'] for nd in self.nodes if nd['id'] == s), None)
+            tt = next((nd['type'] for nd in self.nodes if nd['id'] == t), None)
+            if st == 'resource' and tt == 'process' and t in procs_list and s in res_list:
+                alloc[procs_list.index(t)][res_list.index(s)] += 1
+            elif st == 'process' and tt == 'resource' and s in procs_list and t in res_list:
+                req[procs_list.index(s)][res_list.index(t)] += 1
+
+        # Available = total_instances - allocated (each resource has at least 1 instance)
+        avail = []
+        for j in range(nr_):
+            allocated = sum(alloc[i][j] for i in range(np_))
+            avail.append(max(0, max(1, allocated) - allocated))
+
+        # Safety check (Banker's-style with request as need)
+        work = avail[:]
+        fin = [False] * np_
+        safe_seq = []
+        for _ in range(np_):
+            for i in range(np_):
+                if not fin[i] and all(req[i][j] <= work[j] for j in range(nr_)):
+                    work = [work[j] + alloc[i][j] for j in range(nr_)]
+                    fin[i] = True
+                    safe_seq.append(procs_list[i])
+                    break
+        is_safe = len(safe_seq) == np_
+
+        # ── Helper to render a matrix table card ──
+        def _build_table(parent, title, dot_color, data, proc_color):
+            card = Card(parent)
+            h = ctk.CTkFrame(card, fg_color="transparent")
+            h.pack(fill="x", padx=16, pady=(16, 8))
+            ctk.CTkFrame(h, width=8, height=8, corner_radius=4, fg_color=dot_color).pack(side="left", padx=(0, 8))
+            ctk.CTkLabel(h, text=title, font=(FONT_FAMILY, 13, "bold"), text_color=STONE800).pack(side="left")
+            tbl = ctk.CTkFrame(card, fg_color="transparent")
+            tbl.pack(fill="x", padx=16, pady=(0, 16))
+            ctk.CTkLabel(tbl, text="PROCESS", font=(FONT_FAMILY, 10), text_color=STONE400, width=70).grid(row=0, column=0, padx=2, pady=2)
+            for j, r in enumerate(res_list):
+                ctk.CTkLabel(tbl, text=r, font=(FONT_FAMILY, 10, "bold"), text_color=STONE400, width=50).grid(row=0, column=j+1, padx=2, pady=2)
+            for i, p in enumerate(procs_list):
+                ctk.CTkLabel(tbl, text=p, font=(FONT_FAMILY, 12, "bold"), text_color=proc_color, width=70).grid(row=i+1, column=0, padx=2, pady=1)
+                for j in range(nr_):
+                    ctk.CTkLabel(tbl, text=str(data[i][j]), font=(FONT_FAMILY, 12), text_color=STONE700, width=50).grid(row=i+1, column=j+1, padx=2, pady=1)
+            return card
+
+        # Allocation & Request tables side-by-side
+        row = ctk.CTkFrame(self.tables_frame, fg_color="transparent")
+        row.pack(fill="x", pady=(8, 0))
+        row.columnconfigure((0, 1), weight=1)
+        _build_table(row, "Allocation Matrix", ORANGE, alloc, ORANGE).grid(row=0, column=0, padx=(0, 4), sticky="nsew")
+        _build_table(row, "Request Matrix", BLUE, req, BLUE).grid(row=0, column=1, padx=(4, 0), sticky="nsew")
+
+        # Available resources
+        av_card = Card(self.tables_frame)
+        av_card.pack(fill="x", pady=(8, 0))
+        avh = ctk.CTkFrame(av_card, fg_color="transparent")
+        avh.pack(fill="x", padx=16, pady=(12, 8))
+        ctk.CTkFrame(avh, width=8, height=8, corner_radius=4, fg_color=AMBER).pack(side="left", padx=(0, 8))
+        ctk.CTkLabel(avh, text="Available Resources", font=(FONT_FAMILY, 13, "bold"), text_color=STONE800).pack(side="left")
+        avr = ctk.CTkFrame(av_card, fg_color="transparent")
+        avr.pack(fill="x", padx=16, pady=(0, 12))
+        for j, r in enumerate(res_list):
+            f = ctk.CTkFrame(avr, fg_color=STONE50, corner_radius=8, border_width=1, border_color=STONE200)
+            f.pack(side="left", padx=(0, 8))
+            ctk.CTkLabel(f, text=r, font=(FONT_FAMILY, 10), text_color=STONE400).pack(padx=12, pady=(6, 0))
+            ctk.CTkLabel(f, text=str(avail[j]), font=(FONT_FAMILY, 16, "bold"), text_color=STONE800).pack(padx=12, pady=(0, 6))
+
+        # Safe Sequence display
+        sc = Card(self.tables_frame)
+        sc.pack(fill="x", pady=(8, 0))
+        if is_safe:
+            sc.configure(fg_color=GREEN_LIGHT, border_color="#a7f3d0")
+            ctk.CTkLabel(sc, text="✓ Safe Sequence Found", font=(FONT_FAMILY, 14, "bold"), text_color="#047857").pack(padx=16, pady=(16, 8), anchor="w")
+            sf = ctk.CTkFrame(sc, fg_color="transparent")
+            sf.pack(fill="x", padx=16, pady=(0, 16))
+            for i, p in enumerate(safe_seq):
+                chip = ctk.CTkFrame(sf, fg_color=WHITE, corner_radius=6, border_width=1, border_color=STONE200)
+                chip.pack(side="left", padx=2)
+                ctk.CTkLabel(chip, text=p, font=(FONT_FAMILY, 13, "bold"), text_color="#047857").pack(padx=14, pady=8)
+                if i < len(safe_seq) - 1:
+                    ctk.CTkLabel(sf, text="→", font=(FONT_FAMILY, 14, "bold"), text_color=STONE400).pack(side="left", padx=4)
+        else:
+            sc.configure(fg_color=RED_LIGHT, border_color="#fecaca")
+            ctk.CTkLabel(sc, text="✗ No Safe Sequence Exists", font=(FONT_FAMILY, 14, "bold"), text_color="#b91c1c").pack(padx=16, pady=(16, 4), anchor="w")
+            ctk.CTkLabel(sc, text="System is unsafe — no valid execution order found.", font=(FONT_FAMILY, 11), text_color=STONE600).pack(padx=16, pady=(0, 16), anchor="w")
+
     def load_preset(self, key):
         p = PRESETS[key]
         self.nodes = [n.copy() for n in p['nodes']]
@@ -613,12 +715,14 @@ class DetectionPage(ctk.CTkScrollableFrame):
         self.draw_graph()
         self.refresh_edge_list()
         self.show_scan_placeholder()
+        for w in self.tables_frame.winfo_children(): w.destroy()
 
     def clear_graph(self):
         self.nodes, self.edges = [], []
         self.draw_graph()
         self.refresh_edge_list()
         self.show_scan_placeholder()
+        for w in self.tables_frame.winfo_children(): w.destroy()
 
     def add_edge(self):
         f = self.edge_from.get().strip().upper()
@@ -1486,6 +1590,9 @@ class DeadlockApp(ctk.CTk):
 # ══════════════════════════════════════════
 
 if __name__ == "__main__":
-    app = DeadlockApp()
-    app.mainloop()
+    try:
+        app = DeadlockApp()
+        app.mainloop()
+    except KeyboardInterrupt:
+        pass
 

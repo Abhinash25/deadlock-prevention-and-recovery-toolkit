@@ -1,0 +1,4 @@
+Component,Tool/Technology,Version,Purpose
+Log Collector,Syslog (RFC 3164/5424),-,Client PC logging
+Log Shipper,Vector,0.35+,Aggregation & parsing
+Parser Engine,VRL (Vector Remap Language),Built-in,JSON parsing & classification
